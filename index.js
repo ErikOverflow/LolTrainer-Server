@@ -14,10 +14,13 @@ v1.get("/ping", (req,res) => {
     res.status(200).json({ ping: "Successful response."});
 });
 
-const riot = require('./services/riotWebServices');
-v1.get("/matches", riot.getGames);
-v1.get("/matchDetails", riot.getMatchDetails);
-v1.get("/summoner", riot.getSummoner);
+const processes = require('./services/processes');
+v1.get("/matches", processes.getMatches);
+v1.get("/matchDetails", processes.getMatchDetails);
+v1.get("/summoner", processes.getSummoner);
+
+const smurfHunt = require('./services/smurfHunter');
+v1.get("/overlappingGames", processes.getOverlappingGames);
 app.use("/api/v1", v1);
 
 app.listen(port, () => console.log(`App is now listening on port: ${port}`));

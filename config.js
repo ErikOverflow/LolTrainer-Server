@@ -6,8 +6,17 @@ const summonerByNameEndpoint = (region, name) => {
     return `https://${region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}`
 }
 
+const matchHistoryUrl = (region, gameId) => {
+    if(!region || !gameId)  
+    {
+        throw new Error("Region and gameId must be specified");
+    }
+    const regionUrl = "na";
+    return `https://matchhistory.${regionUrl}.leagueoflegends.com/en/#match-details/${region}/${gameId}`
+}
+
 const summonerDetailsByIdEndpoint = (region, summonerId) => {
-    if(!region || !name)  
+    if(!region || !summonerId)  
     {
         throw new Error("Region and summonerId must be specified");
     }
@@ -49,12 +58,13 @@ const matchDetailsByIdEndpoint = (region, matchId) => {
 }
 
 module.exports = {
-    riotKey: "RGAPI-e072bcfb-78b1-4230-95ee-c3577ee84022",
+    riotKey: "",
     regionOptions: [
         'NA1'
     ],
     summonerByNameEndpoint,
     summonerDetailsByIdEndpoint,
     matchesByAccountIdEndpoint,
-    matchDetailsByIdEndpoint
+    matchDetailsByIdEndpoint,
+    matchHistoryUrl
 }

@@ -1,13 +1,7 @@
-const axios = require('axios');
 const config = require('../config');
-const { dataDragon } = require('./dataDragon');
+const axios = require('axios');
 
-/*
-api/v1/summoner?region=NA1&summonerName=I have cute dogs
-*/
-const getSummoner = (req, res) => {
-    const summonerName = req.query.summonerName;
-    const region = req.query.region;
+const getSummoner = (region, summonerName) => {
     const url = config.summonerByNameEndpoint(region, summonerName);
     const wsconfig = {
         headers: {
@@ -26,24 +20,13 @@ const getSummoner = (req, res) => {
                         ...summonerDetails,
                         ...result.data
                     };
-                    return res.status(200).json(summonerDetails);
+                    return summonerDetails;
                 })
         })
-
 }
 
-/*
-{
-api/v1/games?region=NA1&accountId=PqT1tpGQnIHGaY4Fhdoj_FefYiUI4mYMPzMHBazH7tI80hI&champion=76...
-}
-*/
-const getGames = (req, res) => {
-    let optionalParms = { ...req.query };
-    delete optionalParms.region; //region is not an optional param.
-    delete optionalParms.accountId; //accountId is not an optional param.
-    const region = req.query.region;
-    const accountId = req.query.accountId;
-    const url = config.matchesByAccountIdEndpoint(region, accountId, optionalParms)
+const getMatches = (region, accountId, optionalParams) => {
+    const url = config.matchesByAccountIdEndpoint(region, accountId, optionalParams)
     const wsconfig = {
         headers: {
             'X-Riot-Token': config.riotKey
@@ -63,16 +46,11 @@ const getGames = (req, res) => {
                 endIndex: result.data.endIndex,
                 matches
             };
-            return res.status(200).json(searchResult);
+            return searchResult;
         })
 }
 
-/*
-api/v1/matchDetails?region=NA1&matchId=3473013969
-*/
-const getMatchDetails = (req, res) => {
-    let region = req.query.region;
-    let matchId = req.query.matchId;
+const getMatchDetails = (region, matchId) => {
     const url = config.matchDetailsByIdEndpoint(region, matchId);
     const wsconfig = {
         headers: {
@@ -84,7 +62,7 @@ const getMatchDetails = (req, res) => {
             const data = result.data;
             let matchDetails = {
                 queue: data.queueId,
-                duration: data.duration,
+                duration: data.gameDuration,
                 startTime: data.gameCreation,
                 redTeam: [],
                 blueTeam: []
@@ -107,13 +85,12 @@ const getMatchDetails = (req, res) => {
                     matchDetails.redTeam.push(participant);
                 }
             });
-            return res.status(200).json(matchDetails);
+            return matchDetails;
         })
 }
 
-
 module.exports = {
-    getGames,
     getSummoner,
+    getMatches,
     getMatchDetails
 }
