@@ -58,7 +58,9 @@ const getOverlappingGames = (region, accountIds) => {
                         //match 2 started first
                         if(match2.startTime + match2.duration*1000 > match1.startTime){
                             //match 2 ended after match 1 started
-                            definiteOverlaps.push(potentialOverlap);
+                            definiteOverlaps.push({
+                                infraction: potentialOverlap
+                            });
                         }
                     }else{
                         //match 1 started first
@@ -66,7 +68,9 @@ const getOverlappingGames = (region, accountIds) => {
                             //match 1 ended after match 2 started
                             potentialOverlap[0].duration = `${match1.duration/60} minutes`;
                             potentialOverlap[1].duration = `${match2.duration/60} minutes`;
-                            definiteOverlaps.push(potentialOverlap);
+                            definiteOverlaps.push({
+                                infraction: potentialOverlap
+                            });
                         }
                     }
                     return Promise.resolve('ok');
@@ -75,8 +79,8 @@ const getOverlappingGames = (region, accountIds) => {
             
         }))
         .then(_=> {
-            definiteOverlaps.forEach(overlap => {
-                overlap.forEach(game => {
+            definiteOverlaps.forEach(infraction => {
+                infraction.infraction.forEach(game => {
                     game.url = config.matchHistoryUrl(game.region, game.gameId);
                     game.startDate = new Date(game.startTime);
                 })
