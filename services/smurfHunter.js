@@ -6,7 +6,7 @@ const getOverlappingGames = (region, accountIds) => {
     matchLists = {};
     return Promise.all(accountIds.map(accountId => {
         return riot.getMatches(region, accountId, {startIndex:0, endIndex:100}).then(matches => {
-            matchTimes = [];
+            const matchTimes = [];
             matches.matches.map(match => {
                 const matchTime = {
                     region,
@@ -58,6 +58,8 @@ const getOverlappingGames = (region, accountIds) => {
                         //match 2 started first
                         if(match2.startTime + match2.duration*1000 > match1.startTime){
                             //match 2 ended after match 1 started
+                            potentialOverlap[0].duration = `${match1.duration/60} minutes`;
+                            potentialOverlap[1].duration = `${match2.duration/60} minutes`;
                             definiteOverlaps.push({
                                 infraction: potentialOverlap
                             });
